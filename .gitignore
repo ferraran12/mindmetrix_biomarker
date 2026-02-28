@@ -1,0 +1,17 @@
+# env
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache files
+__pycache__/
+
+# Distribution files
+dist/
+
+# Assignment files
+MindMetrix_DataScientistAssignment/
+
+# Data files`
+data/
