@@ -114,7 +114,7 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def check_subjects_in_datasets(physiological_df: pd.DataFrame, subjects_df: pd.DataFrame) -> None:
+def check_subjects_in_datasets(physiological_df: pd.DataFrame, subjects_df: pd.DataFrame) -> tuple[set, set]:
     physiological_subjects = set(physiological_df["SubjectID"].unique())
     subjects_subjects = set(subjects_df["SubjectID"].unique())
     missing_in_physiological = subjects_subjects - physiological_subjects
@@ -127,15 +127,17 @@ def check_subjects_in_datasets(physiological_df: pd.DataFrame, subjects_df: pd.D
         print(
             f"Warning: The following SubjectIDs are present in the physiological dataset but missing in the subjects dataset: {missing_in_subjects}"
         )
-
+    return (missing_in_physiological, missing_in_subjects)
 
 if __name__ == "__main__":
-    data_path = Path("data/random_sample_timeseries.csv")
+    data_path = Path("data/timeseries.csv")
     df = load_data(data_path)
     preprocessed_physiological_df = preprocess_physiological_data(df)
-    # preprocessed_physiological_df.to_csv("data/preprocessed_physiological_data.csv", index=False)
     subjects_data_path = Path("data/subjects.csv")
     subjects_df = load_data(subjects_data_path)
     preprocessed_subjects_df = preprocess_subjects_data(subjects_df)
+    missing_in_physiological, missing_in_subjects = check_subjects_in_datasets(preprocessed_physiological_df, preprocessed_subjects_df)
+    preprocessed_subjects_df = preprocessed_subjects_df[~preprocessed_subjects_df["SubjectID"].isin(missing_in_physiological)]
+    preprocessed_physiological_df = preprocessed_physiological_df[~preprocessed_physiological_df["SubjectID"].isin(missing_in_subjects)]
     preprocessed_subjects_df.to_csv("data/preprocessed_subjects_data.csv", index=False)
-    check_subjects_in_datasets(preprocessed_physiological_df, preprocessed_subjects_df)
+    preprocessed_physiological_df.to_csv("data/preprocessed_physiological_data.csv", index=False)
