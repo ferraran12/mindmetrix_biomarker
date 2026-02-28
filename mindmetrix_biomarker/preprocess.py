@@ -2,7 +2,6 @@ import pandas as pd
 import pandera.pandas as pa
 import numpy as np
 from pathlib import Path
-
 from mindmetrix_biomarker.loader import load_data
 
 
@@ -43,7 +42,7 @@ def preprocess_physiological_data(
         schema.validate(df)
     except pa.errors.SchemaError as e:
         print(f"Schema validation error: {e}")
-        raise e
+        raise
 
     # Remove rows with missing values
     df: pd.DataFrame = df.dropna()
@@ -102,6 +101,7 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
         schema.validate(df)
     except pa.errors.SchemaError as e:
         print(f"Schema validation error: {e}")
+        raise
     # Remove rows with missing values
     df: pd.DataFrame = df.dropna()
     # Delete duplicates
