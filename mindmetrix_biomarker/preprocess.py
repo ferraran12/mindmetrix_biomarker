@@ -21,8 +21,6 @@ def preprocess_physiological_data(
         return pd.DataFrame()  # Return an empty DataFrame if the input is empty
 
     # Check data schema
-    # SubjectID  DeviceTimestamp  CycleID     Phase  PupilDiameter     GazeX
-    # GazeY     GazeZ   PulseBPM   PPG_SQI  MotionMag
     schema: pa.DataFrameSchema = pa.DataFrameSchema(
         {
             "SubjectID": pa.Column(str),
@@ -61,7 +59,7 @@ def preprocess_physiological_data(
     df["GazeAngleX"] = np.degrees(np.arctan2(df["GazeX"], df["GazeZ"]))
     df["GazeAngleY"] = np.degrees(np.arctan2(df["GazeY"], df["GazeZ"]))
     df: pd.DataFrame = df[(df["GazeAngleX"].between(-30, 30)) & (df["GazeAngleY"].between(-30, 30))]
-    #Enforce correct data types
+    # Enforce correct data types
     df["SubjectID"] = df["SubjectID"].astype(str)
     df["DeviceTimestamp"] = df["DeviceTimestamp"].astype(int)
     df["CycleID"] = df["CycleID"].astype(int)
@@ -83,8 +81,6 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
         print("Warning: The input DataFrame is empty. Returning an empty DataFrame.")
         return pd.DataFrame()  # Return an empty DataFrame if the input is empty
     # Check data schema
-    # SubjectID,STAI_T,STAI_S,Gender,
-    # Handedness,WearsGlasses,CalibrationError,BloodType
     schema: pa.DataFrameSchema = pa.DataFrameSchema(
         {
             "SubjectID": pa.Column(str),
@@ -118,6 +114,21 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def check_subjects_in_datasets(physiological_df: pd.DataFrame, subjects_df: pd.DataFrame) -> None:
+    physiological_subjects = set(physiological_df["SubjectID"].unique())
+    subjects_subjects = set(subjects_df["SubjectID"].unique())
+    missing_in_physiological = subjects_subjects - physiological_subjects
+    missing_in_subjects = physiological_subjects - subjects_subjects
+    if missing_in_physiological:
+        print(
+            f"Warning: The following SubjectIDs are present in the subjects dataset but missing in the physiological dataset: {missing_in_physiological}"
+        )
+    if missing_in_subjects:
+        print(
+            f"Warning: The following SubjectIDs are present in the physiological dataset but missing in the subjects dataset: {missing_in_subjects}"
+        )
+
+
 if __name__ == "__main__":
     data_path = Path("data/random_sample_timeseries.csv")
     df = load_data(data_path)
@@ -127,3 +138,4 @@ if __name__ == "__main__":
     subjects_df = load_data(subjects_data_path)
     preprocessed_subjects_df = preprocess_subjects_data(subjects_df)
     preprocessed_subjects_df.to_csv("data/preprocessed_subjects_data.csv", index=False)
+    check_subjects_in_datasets(preprocessed_physiological_df, preprocessed_subjects_df)
