@@ -42,8 +42,6 @@ def preprocess_physiological_data(
         print(f"Schema validation error: {e}")
         raise
 
-    # Remove rows with missing values
-    df: pd.DataFrame = df.dropna()
     # Delete duplicates
     df: pd.DataFrame = df.drop_duplicates()
     # Remove implausible values in physiological data
@@ -98,10 +96,12 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
     except pa.errors.SchemaError as e:
         print(f"Schema validation error: {e}")
         raise
-    # Remove rows with missing values
-    df: pd.DataFrame = df.dropna()
     # Delete duplicates
     df: pd.DataFrame = df.drop_duplicates()
+    # Transform to numeric
+    df["Gender_numeric"] = df["Gender"].map({"F": 1, "M": 0})
+    df["Handedness_numeric"] = df["Handedness"].map({"R": 1, "L": 0})
+    df["BloodType_numeric"] = df["BloodType"].map({"O":0, "A": 1, "B": 2, "AB": 3})
     # Enforce correct data types
     df["STAI_T"] = df["STAI_T"].astype(int)
     df["STAI_S"] = df["STAI_S"].astype(int)
@@ -130,14 +130,14 @@ def check_subjects_in_datasets(physiological_df: pd.DataFrame, subjects_df: pd.D
     return (missing_in_physiological, missing_in_subjects)
 
 if __name__ == "__main__":
-    data_path = Path("data/timeseries.csv")
+    data_path = Path("data/raw/timeseries.csv")
     df = load_data(data_path)
     preprocessed_physiological_df = preprocess_physiological_data(df)
-    subjects_data_path = Path("data/subjects.csv")
+    subjects_data_path = Path("data/raw/subjects.csv")
     subjects_df = load_data(subjects_data_path)
     preprocessed_subjects_df = preprocess_subjects_data(subjects_df)
     missing_in_physiological, missing_in_subjects = check_subjects_in_datasets(preprocessed_physiological_df, preprocessed_subjects_df)
     preprocessed_subjects_df = preprocessed_subjects_df[~preprocessed_subjects_df["SubjectID"].isin(missing_in_physiological)]
     preprocessed_physiological_df = preprocessed_physiological_df[~preprocessed_physiological_df["SubjectID"].isin(missing_in_subjects)]
-    preprocessed_subjects_df.to_csv("data/preprocessed_subjects_data.csv", index=False)
-    preprocessed_physiological_df.to_csv("data/preprocessed_physiological_data.csv", index=False)
+    preprocessed_subjects_df.to_csv("data/preprocessed/subjects.csv", index=False)
+    preprocessed_physiological_df.to_csv("data/preprocessed/physiological.csv", index=False)
