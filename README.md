@@ -8,12 +8,12 @@ python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install -e .
 ```
-### Insert timeseries.csv data into data/raw folder
+### ⚠️ Insert timeseries.csv data into data/raw folder
 Given the size of the data, only the subjects.csv data are already in the `data/raw` folder. Please also insert the `timeseries.csv` into the folder `data/raw`
 
-## The mindMetrix_biomarker package
+## The mindmetrix_biomarker package
 ### Data loader module
-The `loader.py` module is responsible for load the datasets.
+The `loader.py` module is responsible for loading the datasets.
 
 ### Data Preprocessing module
 The `preprocess` module contains functions to preprocess the physiological and subjects data. You can use these functions to clean and prepare your data for feature extraction. 
@@ -39,11 +39,11 @@ features = extract_features(preprocessed_data)
 Run the following notebooks to see the data exploration and the results of the analysis.
 
 ### Exploration
-In `exploration/exploration.ipynb` you find the notebook that explore the datasets.
+In `exploration/exploration.ipynb` you find the notebook that explores the datasets.
 
 ### Results
 In the `results` directory, you can find three Jupyter notebooks: 
-- `biomarkers.ipynb` shows the results and answer the hypothesis stated in Report Mindmetrix Assignment.docx file. 
+- `biomarkers.ipynb` shows the results and answers the hypothesis stated in the Report Mindmetrix Assignment.docx file.
 - `PCA.ipynb` that shows how to perform Principal Component Analysis (PCA) on the extracted features to identify patterns and reduce dimensionality.
 
 
