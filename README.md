@@ -5,6 +5,7 @@ To use the mindmetrix_biomarker package, follow the instructions below to set up
 
 ```bash
 uv sync
+source .venv/bin/activate
 uv pip install -e .
 ```
 ### ⚠️ Insert timeseries.csv data into data/raw folder
