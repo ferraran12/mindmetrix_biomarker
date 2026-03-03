@@ -3,6 +3,14 @@
 ### Install the dependencies and the mindmetrix_biomarker package
 To use the mindmetrix_biomarker package, follow the instructions below to set up your environment and install the package:
 
+#### with pip
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+#### with uv
 ```bash
 uv sync
 source .venv/bin/activate
