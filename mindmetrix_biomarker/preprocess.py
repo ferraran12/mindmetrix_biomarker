@@ -15,12 +15,14 @@ def preprocess_physiological_data(
     PulseBPM_lower_threshold: float = 40.0,
     PulseBPM_upper_threshold: float = 300.0,
 ) -> pd.DataFrame:
+    print("Preprocessing physiological data...")
     # Check if df.empty:
     if df.empty:
         print("Warning: The input DataFrame is empty. Returning an empty DataFrame.")
         return pd.DataFrame()  # Return an empty DataFrame if the input is empty
 
     # Check data schema
+    print("Validating data schema...")
     schema: pa.DataFrameSchema = pa.DataFrameSchema(
         {
             "SubjectID": pa.Column(str),
@@ -44,6 +46,7 @@ def preprocess_physiological_data(
 
     # Delete duplicates
     df: pd.DataFrame = df.drop_duplicates()
+    print("Delete duplicates done.")
     # Remove implausible values in physiological data
     df: pd.DataFrame = df[
         (df.PupilDiameter >= PupilDiameter_lower_threshold) & (df.PupilDiameter <= PupilDiameter_upper_threshold)
@@ -53,10 +56,12 @@ def preprocess_physiological_data(
     df: pd.DataFrame = df[df.PPG_SQI > PPG_SQI_threshold]
     # Discart too high motion magnitude
     df: pd.DataFrame = df[df.MotionMag <= MotionMag_threshold]
+    print("Delete implausible values and low quality signals done.")
     # Filter by angles
     df["GazeAngleX"] = np.degrees(np.arctan2(df["GazeX"], df["GazeZ"]))
     df["GazeAngleY"] = np.degrees(np.arctan2(df["GazeY"], df["GazeZ"]))
     df: pd.DataFrame = df[(df["GazeAngleX"].between(-30, 30)) & (df["GazeAngleY"].between(-30, 30))]
+    print("Filter by angles done.")
     # Enforce correct data types
     df["SubjectID"] = df["SubjectID"].astype(str)
     df["DeviceTimestamp"] = df["DeviceTimestamp"].astype(int)
@@ -69,11 +74,13 @@ def preprocess_physiological_data(
     df["PulseBPM"] = df["PulseBPM"].astype(float)
     df["PPG_SQI"] = df["PPG_SQI"].astype(float)
     df["MotionMag"] = df["MotionMag"].astype(float)
+    print("Preprocessing physiological data done.")
 
     return df
 
 
 def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
+    print("Preprocessing subjects data...")
     # Check if df.empty:
     if df.empty:
         print("Warning: The input DataFrame is empty. Returning an empty DataFrame.")
@@ -98,6 +105,7 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
         raise
     # Delete duplicates
     df: pd.DataFrame = df.drop_duplicates()
+    print("Delete duplicates done.")
     # Transform to numeric
     df["Gender_numeric"] = df["Gender"].map({"F": 1, "M": 0})
     df["Handedness_numeric"] = df["Handedness"].map({"R": 1, "L": 0})
@@ -110,6 +118,7 @@ def preprocess_subjects_data(df: pd.DataFrame) -> pd.DataFrame:
     df["WearsGlasses"] = df["WearsGlasses"].astype(int)
     df["CalibrationError"] = df["CalibrationError"].astype(float)
     df["BloodType"] = df["BloodType"].astype(str)
+    print("Preprocessing subjects data done.")
 
     return df
 
