@@ -4,9 +4,8 @@
 To use the mindmetrix_biomarker package, follow the instructions below to set up your environment and install the package:
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-pip install -e .
+uv sync
+uv pip install -e .
 ```
 ### ⚠️ Insert timeseries.csv data into data/raw folder
 Given the size of the data, only the subjects.csv data are already in the `data/raw` folder. Please also insert the `timeseries.csv` into the folder `data/raw`

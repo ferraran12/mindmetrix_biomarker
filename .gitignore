@@ -14,3 +14,5 @@ dist/
 # Assignment files
 MindMetrix_DataScientistAssignment/
 
+# Dataset
+timeseries.csv
